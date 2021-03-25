@@ -12,8 +12,13 @@ import PermContactCalendarOutlinedIcon from "@material-ui/icons/PermContactCalen
 import AppsIcon from "@material-ui/icons/Apps";
 import StorageIcon from "@material-ui/icons/Storage";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import AddIcon from "@material-ui/icons/Add";
+import { db } from "../firebase";
+import { useCollection } from "react-firebase-hooks/firestore";
 
 function Sidebar() {
+  const [channels, loading, error] = useCollection(db.collection("rooms"));
+
   return (
     <SidebarContainer>
       <SidebarHeader>
@@ -26,18 +31,25 @@ function Sidebar() {
         </SidebarInfo>
         <CreateIcon />
       </SidebarHeader>
-      <SidebarOption Icon={InsertCommentIcon} tilte="Threads" />
-      <SidebarOption Icon={QuestionAnswerIcon} tilte="All DMs" />
-      <SidebarOption Icon={AlternateEmailIcon} tilte="Mentions & reactions" />
-      <SidebarOption Icon={BookmarkBorderIcon} tilte="Saved items" />
-      <SidebarOption Icon={ArrowRightIcon} tilte="Channels" />
+      <SidebarOption Icon={InsertCommentIcon} title="Threads" />
+      <SidebarOption Icon={QuestionAnswerIcon} title="All DMs" />
+      <SidebarOption Icon={AlternateEmailIcon} title="Mentions & reactions" />
+      <SidebarOption Icon={BookmarkBorderIcon} title="Saved items" />
       <SidebarOption
         Icon={PermContactCalendarOutlinedIcon}
-        tilte="People & user groups"
+        title="People & user groups"
       />
-      <SidebarOption Icon={AppsIcon} tilte="Apps" />
-      <SidebarOption Icon={StorageIcon} tilte="File browser" />
-      <SidebarOption Icon={MoreVertIcon} tilte="More" />
+      <SidebarOption Icon={AppsIcon} title="Apps" />
+      <SidebarOption Icon={StorageIcon} title="File browser" />
+      <SidebarOption Icon={MoreVertIcon} title="More" />
+      <hr />
+      <SidebarOption Icon={ArrowRightIcon} title="Channels" />
+      <hr />
+      <SidebarOption Icon={AddIcon} addChannelOption title="Add channels" />
+
+      {channels?.docs.map((doc) => (
+        <SidebarOption key={doc.id} id={doc.id} title={doc.data().name} />
+      ))}
     </SidebarContainer>
   );
 }
@@ -51,6 +63,11 @@ const SidebarContainer = styled.div`
   border-top: 1px solid #49274b;
   max-width: 267px;
   margin-top: 60px;
+
+  > hr {
+    margin: 10px 0;
+    border: 1px solid #49274b;
+  }
 `;
 
 const SidebarHeader = styled.div`
